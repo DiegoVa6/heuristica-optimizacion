@@ -1,6 +1,3 @@
-Sí. Te dejo un `README.md` para **`practica_01_programacion_lineal`**, pensado para copiar y pegar. Está alineado con la memoria y con los archivos que tienes ahora: modelo básico en Calc, dos modelos GLPK y sus scripts de generación/ejecución.
-
-````md
 # Práctica 01 — Programación lineal
 
 Proyecto académico de la asignatura **Heurística y Optimización** (Universidad Carlos III de Madrid), centrado en la **modelización y resolución de problemas de asignación y optimización de recursos** mediante **LibreOffice Calc** y **GLPK**.
@@ -139,13 +136,3 @@ report/practica_01_memoria.pdf
 ## Notas
 
 Este repositorio conserva tanto la parte más académica de modelización como la parte práctica de automatización con Python y GLPK, con el objetivo de dejar una referencia clara del trabajo realizado en la asignatura.
-
-````
-
-Antes de pegarlo, solo te diría que hagas una cosa para que encaje perfecto con ese README: crea la carpeta `report/` y mete ahí la memoria con un nombre limpio, por ejemplo:
-
-```text
-report/practica_01_memoria.pdf
-````
-
-Luego hacemos el de `practica_02_csp_y_busqueda`.
