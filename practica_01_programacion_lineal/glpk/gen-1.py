@@ -9,6 +9,13 @@ import re
 def leer_entrada(path):
     with open(path, encoding="utf-8") as f:
         lines = [l.strip() for l in f if l.strip()]
+
+    if not lines:
+        raise ValueError("El fichero de entrada está vacío")
+
+    if len(lines) < 4:
+        raise ValueError("El fichero de entrada debe tener al menos 4 líneas útiles")
+
     n, m = map(int, lines[0].split())
     kd, kp = map(float, lines[1].split())
     d = list(map(float, lines[2].split()))
@@ -43,7 +50,7 @@ def leer_sol(path):
                 asign[i] = s
     return asign
 
-def calcular_coste(asig, kd, kp, d, p, n, m):
+def calcular_coste(asig, kd, kp, d, p, m):
     total = 0
     for i in range(1, m+1):
         if i in asig:
@@ -61,18 +68,26 @@ def main():
     ruta_mod = "parte-2-1.mod"
     ruta_sol = "solution.txt"
 
-    n, m, kd, kp, d, p = leer_entrada(ruta_in)
-    escribir_dat(ruta_dat, n, m, kd, kp, d, p)
-    ejecutar_glpk(ruta_mod, ruta_dat, ruta_sol)
-    asign = leer_sol(ruta_sol)
+    try:
+        n, m, kd, kp, d, p = leer_entrada(ruta_in)
+        escribir_dat(ruta_dat, n, m, kd, kp, d, p)
+        ejecutar_glpk(ruta_mod, ruta_dat, ruta_sol)
+        asign = leer_sol(ruta_sol)
 
-    total = calcular_coste(asign, kd, kp, d, p, n, m)
-    print(f"{total:.6f} {m*n} {m+n}")
-    for i in range(1, m+1):
-        if i in asign:
-            print(f"bus {i} -> franja {asign[i]}")
-        else:
-            print(f"bus {i} -> SIN_ASIGNACION")
+        total = calcular_coste(asign, kd, kp, d, p, m)
+        print(f"{total:.6f} {m*n} {m+n}")
+        for i in range(1, m+1):
+            if i in asign:
+                print(f"bus {i} -> franja {asign[i]}")
+            else:
+                print(f"bus {i} -> SIN_ASIGNACION")
+
+    except ValueError as e:
+        print(f"Error: {e}")
+        sys.exit(1)
+    except FileNotFoundError:
+        print(f"Error: no se encontró el fichero '{ruta_in}'")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
