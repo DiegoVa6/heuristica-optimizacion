@@ -13,10 +13,17 @@ import re
 def leer_entrada(path):
     with open(path, encoding="utf-8") as f:
         lines = [l.strip() for l in f if l.strip()]
+
+    if not lines:
+        raise ValueError("El fichero de entrada está vacío")
+
     try:
         n, m, u = map(int, lines[0].split())
     except Exception:
         raise ValueError("Primera línea debe ser: <n> <m> <u>")
+
+    if len(lines) < 1 + m + u:
+        raise ValueError("El fichero de entrada no contiene suficientes líneas")
 
     C, idx = [], 1
     for _ in range(m):
@@ -91,7 +98,7 @@ def contadores(n, m, u):
     return num_vars, num_cons
 
 def main():
-    if len(sys.argv) < 3:
+    if len(sys.argv) != 3:
         print("Uso: ./gen-2.py <fichero-entrada.in> <fichero-salida.dat>")
         sys.exit(1)
 
@@ -99,24 +106,34 @@ def main():
     ruta_mod = "parte-2-2.mod"
     ruta_sol = "solution_2_2.txt"
 
-    n, m, u, C, O = leer_entrada(ruta_in)
-    escribir_dat(ruta_dat, n, m, u, C, O)
-    ejecutar_glpk(ruta_mod, ruta_dat, ruta_sol)
+    try:
+        n, m, u, C, O = leer_entrada(ruta_in)
+        escribir_dat(ruta_dat, n, m, u, C, O)
+        ejecutar_glpk(ruta_mod, ruta_dat, ruta_sol)
 
-    asign = leer_asignaciones(ruta_sol)
-    if len(asign) != m:
-        sys.stderr.write("Aviso: no se han encontrado todas las asignaciones en la salida de GLPK.\n")
+        asign = leer_asignaciones(ruta_sol)
+        if len(asign) != m:
+            sys.stderr.write(
+                "Aviso: no se han encontrado todas las asignaciones en la salida de GLPK.\n"
+            )
 
-    z = valor_objetivo(C, asign)
-    num_vars, num_cons = contadores(n, m, u)
+        z = valor_objetivo(C, asign)
+        num_vars, num_cons = contadores(n, m, u)
 
-    print(f"{z} {num_vars} {num_cons}")
-    for i in range(1, m+1):
-        if i in asign:
-            s, t = asign[i]
-            print(f"bus {i} -> taller {t}, franja {s}")
-        else:
-            print(f"bus {i} -> SIN_ASIGNACION")
+        print(f"{z} {num_vars} {num_cons}")
+        for i in range(1, m + 1):
+            if i in asign:
+                s, t = asign[i]
+                print(f"bus {i} -> taller {t}, franja {s}")
+            else:
+                print(f"bus {i} -> SIN_ASIGNACION")
+
+    except ValueError as e:
+        print(f"Error: {e}")
+        sys.exit(1)
+    except FileNotFoundError:
+        print(f"Error: no se encontró el fichero '{ruta_in}'")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
